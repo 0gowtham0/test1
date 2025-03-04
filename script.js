@@ -66,7 +66,7 @@ function checkAnswer(selectedIndex) {
     setTimeout(() => {
         currentQuestionIndex++;
         loadQuestion();
-    }, 5000);
+    }, 3000);
 }
 
 // Load questions from database
