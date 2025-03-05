@@ -5,9 +5,8 @@ const { createClient } = supabase;
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let questions = [];
-let currentQuestionIndex = 0;
+let currentQuestionIndex = parseInt(localStorage.getItem("currentQuestionIndex")) || 0; // Load last question index
 
-// Fetch questions from Supabase
 async function fetchQuestions() {
     const { data, error } = await supabaseClient.from("quiz_questions").select("*");
 
@@ -45,7 +44,8 @@ function loadQuestion() {
         optionsContainer.appendChild(button);
     });
 
-    document.getElementById("description").innerText = ""; // Clear previous description
+    document.getElementById("description").innerText = ""; // Clear previous explanation
+    document.getElementById("next-button").style.display = "none"; // Hide next button initially
 }
 
 function checkAnswer(selectedIndex) {
@@ -61,13 +61,15 @@ function checkAnswer(selectedIndex) {
         button.disabled = true;
     });
 
-    document.getElementById("description").innerText = questionData.description; // Show explanation
-
-    setTimeout(() => {
-        currentQuestionIndex++;
-        loadQuestion();
-    }, 3000);
+    document.getElementById("description").innerText = questionData.description;
+    document.getElementById("next-button").style.display = "block"; // Show next button
 }
+
+document.getElementById("next-button").addEventListener("click", () => {
+    currentQuestionIndex++;
+    localStorage.setItem("currentQuestionIndex", currentQuestionIndex); // Save progress
+    loadQuestion();
+});
 
 // Load questions from database
 fetchQuestions();
